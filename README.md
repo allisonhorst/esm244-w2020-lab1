@@ -13,8 +13,12 @@
 - `janitor`
 - `here`
 - `sf`
-- `blogdown` (and see email - you need to have used `blogdown::install_hugo()` to get hugo, too)
+- `blogdown` (you need to have used `blogdown::install_hugo()` to get hugo, too)
 
-### Data included: 
+### Data: 
+
+- Prison populations in the United States
+- State borders spatial data
+
 
 
