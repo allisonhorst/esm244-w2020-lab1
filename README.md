@@ -17,8 +17,8 @@
 
 ### Data: 
 
-- Prison populations in the United States
-- State borders spatial data
+- Prison populations in the United States from [The Vera Institute](https://github.com/vera-institute/incarceration_trends)
+- US state boundaries spatial data from [cfitzpatrick](https://www.arcgis.com/home/item.html?id=f7f805eb65eb4ab787a0a3e1116ca7e5)
 
 
 
