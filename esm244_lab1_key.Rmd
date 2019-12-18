@@ -39,7 +39,6 @@ library(janitor)
 library(here)
 library(plotly)
 library(gghighlight)
-library(ggrepel)
 library(sf)
 library(blogdown)
 ```
