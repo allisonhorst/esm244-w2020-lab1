@@ -1,0 +1,267 @@
+---
+title: "ESM 244 Lab 1 -  Review wrangling & viz, meet blogdown"
+author: "Allison Horst"
+date: "12/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Lab 1 Objectives:
+
+- Review reading, wrangling, and data viz basics from ESM 206
+- Read in spatial data
+- Join spatial data to non-spatial attributes
+- Create a chloropleth
+- Get started creating their own data science blog with `blogdown`
+
+### Set-up:
+
+- Students should have forked repo containing all materials
+- Clone repo to work locally in RStudio
+- Create a new R Markdown document
+- Packages required: `tidyverse`, `janitor`, `sf`, `here`, `blogdown`
+
+
+#### 0. Attach packages
+
+Reminders: 
+
+- Use `library(package_name)` to attach an installed package
+- If the package is **not** found, you need to install it (once) by running `install.packages("package_name")` in the Console
+- Remember that you have to actually *run* the code to attach packages for their functions to be available
+
+```{r, message = FALSE}
+library(tidyverse)
+library(janitor)
+library(here)
+library(plotly)
+library(gghighlight)
+library(ggrepel)
+library(sf)
+library(blogdown)
+```
+
+
+#### 1. Read in & explore US incarceration data
+
+Data: Prison populations in the United States from [The Vera Institute](https://github.com/vera-institute/incarceration_trends)
+
+Reminders: 
+
+- When working in R Markdown, add code in **code chunks**, which you can create by pressing the green 'Insert' button and choosing `R`, or using the shortcut Command + Shift + M
+- Use `here()` to navigate to folders not in your top-level working directory (discuss: why is this important?)
+
+```{r, message = FALSE}
+us_prison <- read_csv(here("data","incarceration_trends.csv"))
+```
+
+**Always look at your data.**
+
+**Every time.**
+
+**Every. Single. Time.**
+
+Here are some useful functions for data exploration: 
+
+- `View()` - or alternatively, click on object in 'Environment' tab
+- `summary()`
+- `head()`
+
+Let's use them to check out the `us_prison` object we've just stored: 
+```{r}
+# View(us_prison)
+# summary(us_prison)
+# head(us_prison)
+```
+
+Familiarize yourself with the data. Note that there are total populations and population breakdowns by sex and race for each county, as well as jail and prison populations for each county by sex and race. 
+
+#### 2. Wrangling review 1 - California incarceration
+
+In this review section, we'll only explore the proportion of imprisoned people who are black California prisons over time.
+
+Reminders:
+
+- Use the pipe operator (%>%) to link multiple steps in sequence 
+- Check the resulting object after **every** wrangling step
+- Annotate your code! 
+
+The steps we'll use here: 
+
+1. Use `dplyr::select()` to choose which columns to keep (unnecessary, but to remind ourselves):
+    - year
+    - state
+    - county_name
+    - total_prison_pop
+    - black_prison_pop
+2. Use `dplyr::filter()` to only keep observations from California
+3. Use `tidyr::drop_na()` to remove any rows where the prison populations were not reported
+3. Use `dplyr::group_by()` + `dplyr::summarize()` to calculate the totals each year for the entire state
+4. Use `dplyr::ungroup()` to get rid of any grouping
+5. Use `dplyr::mutate()` to add a column that is the proportion of imprisoned people who are black each year
+
+
+Here is what that sequence looks like using the pipe operator:
+```{r}
+ca_prison_prop_bl <- us_prison %>% 
+  select(year, state, county_name, total_prison_pop, black_prison_pop) %>% 
+  filter(state == "CA") %>% 
+  drop_na(total_prison_pop, black_prison_pop) %>% 
+  group_by(year) %>% 
+  summarize(
+    tot_pris_pop = sum(total_prison_pop),
+    pris_pop_black = sum(black_prison_pop)
+  ) %>% 
+  ungroup() %>% 
+  mutate(prop_black = pris_pop_black / tot_pris_pop)
+  
+```
+
+#### 3. ggplot2 for data visualization
+
+Let's refresh our data viz skills with ggplot2 by creating a graph of the proportion of imprisoned people in California who are black from 1983 - 2015:
+
+```{r}
+ggplot(data = ca_prison_prop_bl, aes(x = year, y = prop_black)) +
+  geom_line() +
+  scale_y_continuous(limits = c(0, 0.40)) +
+  theme_minimal() +
+  labs(x = "year",
+       y = "Proportion black (/ California total imprisoned")
+```
+
+#### 4. What if I wanted to do this for all 50 states?
+
+The glory of reproducible code! 
+I can copy the code from above, EXCEPT:
+
+- Remove filter for `state == "CA"`
+- When grouping to calculate totals, group by `year` AND `state`
+
+```{r}
+us_prison_prop_bl <- us_prison %>% 
+  select(year, state, county_name, total_prison_pop, black_prison_pop) %>% 
+  drop_na(total_prison_pop, black_prison_pop) %>%
+  group_by(year, state) %>% 
+  summarize(
+    tot_pris_pop = sum(total_prison_pop),
+    pris_pop_black = sum(black_prison_pop)
+  ) %>% 
+  ungroup() %>% 
+  mutate(prop_black = pris_pop_black / tot_pris_pop)
+```
+
+
+#### 5. More data visualization
+
+And let's make a plot of all 50 (or try to):
+```{r}
+ggplot(data = us_prison_prop_bl, aes(x = year, y = prop_black)) +
+  geom_line()
+```
+
+Yuck! What's happening there?
+
+ggplot has no idea that there is a variable for 'state' that we'd want to group by. We can do that a number of ways, but one is to change an aesthetic (like line color) based on the grouping variable: 
+
+```{r}
+state_graph <- ggplot(data = us_prison_prop_bl, aes(x = year, y = prop_black)) +
+  geom_line(aes(color = state)) +
+  theme_minimal() +
+  labs(x = "Year",
+       y = "Proportion of state prisoners who are black")
+
+state_graph
+```
+
+That's pretty hard to digest (also, whoa). Some other ways we can break things down: 
+
+Interactive graphs with plotly:
+```{r}
+ggplotly(state_graph)
+```
+
+What if I want to just highlight a single state of interest?
+
+Then I could use `gghighlight`:
+```{r}
+state_graph +
+  gghighlight(state == "TX" | state == "CA")
+```
+
+#### 6. Let's make a chloropleth showing those proportions for 2010
+
+First, wrangle object `us_prison_prop_bl` to just get observations from 2010: 
+```{r}
+prop_bl_2010 <- us_prison_prop_bl %>% 
+  filter(year == 2010)
+```
+
+A ggplot first:
+
+**Note**: the `fct_reorder()` here will make them show up in meaningful order, not in the default alphabetical order for character data.
+```{r}
+ggplot(data = prop_bl_2010, aes(x = fct_reorder(state, prop_black), y = prop_black)) +
+  geom_col(aes(fill = prop_black)) + 
+  theme_minimal() +
+  labs(x = "State abbreviation",
+       y = "Proportion of imprisoned people who are black\n(2010 data only)") +
+  coord_flip() 
+
+```
+
+And that's what we want to show on a map of the United States.
+
+Get the US states data:
+```{r}
+states <- read_sf(dsn = here("data","us_spatial"), layer = "states")
+```
+
+Use plot to look at it quickly:
+```{r}
+plot(states)
+```
+
+And see what the sf object actually looks like (hint: it looks like a regular data frame, but geometries are sticky).
+```{r}
+View(states)
+```
+
+Aha. Now we want to merge the spatial data with the prison attributes: 
+```{r}
+prison_spatial <- states %>% 
+  left_join(prop_bl_2010, by = c("STATE_ABBR" = "state"))
+```
+
+Then look at `prison_spatial` - notice that whichever states *had* data for 2015 now show up with the aligned spatial information! 
+
+Finally, let's make a map of it: 
+```{r}
+ggplot() +
+  geom_sf(data = prison_spatial, 
+          aes(fill = prop_black),
+          size = 0.2) +
+  scale_fill_gradient(low = "yellow", high = "red") +
+  theme_minimal()
+```
+
+#### 7. So what's so cool about `sf` objects? 
+
+They're so cool because sticky geometries means that you get to wrangle as you would with a normal data frame, but the spatial information is retained! 
+
+Example: From prison_spatial, filter to only include CA, OR and WA. Make a chloropleth based on the total prison population (tot_pris_pop) for the three states. 
+
+```{r}
+west_coast_prison <- prison_spatial %>% 
+  filter(STATE_ABBR %in% c("CA", "OR", "WA"))
+
+ggplot(data = west_coast_prison) +
+  geom_sf(aes(fill = tot_pris_pop))
+```
+
+### End Part 1
+
+--------
