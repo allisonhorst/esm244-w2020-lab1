@@ -24,6 +24,6 @@
 
 ### Resources for `blogdown`:
 
-- (blogdown: Creating websites with R Markdown)[https://bookdown.org/yihui/blogdown/] by Yihui Xie, Amber Thomas, and Alison Hill
-- (Summer of blogdown)[https://summer-of-blogdown.netlify.com/] by Alison Hill
+- [blogdown: Creating websites with R Markdown](https://bookdown.org/yihui/blogdown/) by Yihui Xie, Amber Thomas, and Alison Hill
+- [Summer of blogdown](https://summer-of-blogdown.netlify.com/) by Alison Hill
 
