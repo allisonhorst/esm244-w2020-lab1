@@ -264,3 +264,5 @@ ggplot(data = west_coast_prison) +
 ### End Part 1
 
 --------
+
+### Part 2: Move on to 'get_your_blog_going.Rmd'!

@@ -1,0 +1,140 @@
+---
+title: "Beginning blogdown"
+subtitle: "ESM 244 - professional website term project" 
+author: "Allison Horst"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Overview
+
+One of your term projects for ESM 244 is to create your **professional blog** (using `blogdown` in R) that features you, your experience and qualifications, and some data science (& beyond) projects that you're proud of. The goal is to create a functional website to share with future employers, colleagues, collaborators, friends, and family to share your data science and R skills. 
+
+### Resources 
+
+These guidelines (and everything we'll do with `blogdown` this quarter) follow **exactly** the materials that other wonderful people have put together, including: 
+
+- [blogdown: Creating websites with R Markdown](https://bookdown.org/yihui/blogdown/) by Yihui Xie, Amber Thomas, and Alison Hill
+
+- Alison Hill's [Summer of Blogdown](https://summer-of-blogdown.netlify.com/)
+
+### Set-up
+
+#### Get `blogdown` and `hugo`
+
+##### 1. Create a version-controlled R project
+
+- Create a new repo on GitHub called 'my-site-initials' (e.g. my-site-ah)
+- Clone the project to work locally in RStudio
+
+##### 2. Install `blogdown` package in R (once on your computer):
+```{r, eval = FALSE}
+# install.packages("blogdown")
+```
+
+##### 3. Attach `blogdown` (once per session):
+```{r, eval = FALSE}
+library(blogdown)
+```
+
+##### 4. Install `hugo` using `blogdown` helper functions (once on your computer):
+```{r, eval = FALSE}
+blogdown::install_hugo()
+
+# Check the verson of hugo:
+blogdown::hugo_version()
+
+# Note: you can also check for hugo updates if you're working on this later on:
+blogdown::update_hugo()
+```
+
+From Martin Frigaard on [storybench.org](https://www.storybench.org/how-to-build-a-website-with-blogdown-in-r/): "`blogdown` is an R package that allows you to create websites from R markdown files using Hugo, an open-source static site generator written in Go and known for being incredibly fast."
+
+### Create a website
+
+Now that we have ourselves set-up, we can create a website using an existing hugo theme. 
+
+**Note**: hugo themes exist in GitHub repos. The one we'll use today is [gcushen/hugo-academic](https://github.com/gcushen/hugo-academic)
+
+**Beware**: There are many other existing hugo themes (see: https://themes.gohugo.io/), but not all of them are user-friendly, maintained, or tested with blogdown. See other recommended themes here: https://bookdown.org/yihui/blogdown/other-themes.html
+
+I **strongly recommend** sticking with hugo-academic for your site, at least for now. 
+
+Let's go ahead and do it by running the following: 
+```{r, eval = FALSE}
+new_site(theme = "gcushen/hugo-academic", 
+         sample = TRUE, 
+         theme_example = TRUE, 
+         empty_dirs = TRUE,
+         to_yaml = TRUE)
+```
+
+It may take a few moments to pull the theme. Notice that it shows up in your "Viewer" tab - and you can also have it pop-out into a browser window!  
+
+We can also have the site immediately update after saved changes using `blogdown::serve_site()`: 
+
+```{r, eval = FALSE}
+blogdown::serve_site()
+```
+
+What happens when we `serve_site()`? 
+That means that all our updates are organized and put into the `public/` folder, which is what viewers will actually see when they interact with our website online. That means: **do not change things in `public/`**, change them in the content and they will be propagated correctly into `public/`. 
+
+### Start customizing your site!
+
+- In the `config.toml` file, update the title
+- In `config/_default/params` set a new [theme](https://sourcethemes.com/academic/themes/)
+- In `content/home`:
+    - Set “hero” widget to `active = false` (don't delete)
+    - Set “demo” widget to `active = false` (don't delete)
+    - A lot of changes made to individual sections in: content/home
+- In `content/authors/index.md`, update with your info & contact information
+- Update your picture: 
+    - Save a professional picture (square cropped) of you as `avatar.jpg`
+    - Copy and paste that into `content/authors/admin` to replace existing
+    
+- To remove things from navigation bar: config/_default/menus.toml (just comment out things, don't remove them to make it easier if you ever want to add it back in!), where `weight` updates the order
+
+- Update contact information also in...config/_default/params.toml
+- Link to CV: see config/_default/menus.toml option (at end):
+
+"Link to a PDF of your resume/CV from the menu.
+To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below."
+
+```{r}
+# [[main]]
+#    name = "CV"
+#    url = "files/cv.pdf"
+#    weight = 70
+```
+
+
+- Info on themes: https://sourcethemes.com/academic/themes/
+- Make your own? https://sourcethemes.com/academic/docs/customization/#custom-theme
+
+### Adding your first project
+
+- Create a new folder in `content/project` called my_test_project
+- Create a new R Markdown document, knit and save in the my_test_project folder you just created 
+- `serve_site()` and see that your test project now shows up! 
+
+### Publish (as an unsearchable URL) via Netlify
+
+- Sign up for a Netlify account (https://www.netlify.com/)
+- Go to https://app.netlify.com/drop
+- Drop your `public/` folder where prompted
+- Look, a URL is created with your site on it! 
+
+But we don't want to have to drag & drop our new public folder every time we make changes (although you could). We want our site to auto-deploy whenever we make a stored change - in our case, when we push changes back to GitHub, and those changes will get deployed through Netlify. 
+
+### Have Netlify get updates from GitHub
+
+- In RStudio: stage, commit and push all updates to your GitHub repo
+- Back in Netlify, click on 'Build and Deploy' and notice that you can choose to "Link site to Git". Click that.
+- Choose GitHub
+- You may at this point need to authenticate Netlify to communicate with GitHub > Configure Netlify on GitHub 
+- Choose repository access for your website repo name
+
