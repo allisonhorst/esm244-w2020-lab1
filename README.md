@@ -12,6 +12,8 @@
 - `tidyverse` (newest release)
 - `janitor`
 - `here`
+- `plotly`
+- `gghighlight`
 - `sf`
 - `blogdown` (you need to have used `blogdown::install_hugo()` to get hugo, too)
 
