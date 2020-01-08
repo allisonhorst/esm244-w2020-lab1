@@ -12,9 +12,15 @@
 - `tidyverse` (newest release)
 - `janitor`
 - `here`
-- `blogdown` (you need to have used `blogdown::install_hugo()` to get hugo, too)
+- `kableExtra`
+- `blogdown` (after attaching, also install Hugo by running `blogdown::install_hugo()` in Console)
 
 ### Data: 
+
+**File name:** noaa_fisheries.csv
+**Description:** NOAA Commercial Fisheries Landing data (1950 - 2017)
+**Accessed from:** https://www.st.nmfs.noaa.gov/commercial-fisheries/commercial-landings/
+**Source:** Fisheries Statistics Division of the NOAA Fisheries
 
 ### Resources for `blogdown`:
 
