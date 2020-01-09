@@ -91,7 +91,7 @@ landings_tidy <- us_landings %>%
   clean_names() %>% # Make column headers snake_case
   mutate(
     state = str_to_lower(state),
-    afs_name = tolower(afs_name)
+    afs_name = str_to_lower(afs_name)
   ) %>% # Converts character columns to lowercase
   mutate(dollars_num = parse_number(dollars_usd))
 ```

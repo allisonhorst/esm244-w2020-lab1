@@ -458,7 +458,7 @@ tail(us_landings)</code></pre>
   clean_names() %&gt;% # Make column headers snake_case
   mutate(
     state = str_to_lower(state),
-    afs_name = tolower(afs_name)
+    afs_name = str_to_lower(afs_name)
   ) %&gt;% # Converts character columns to lowercase
   mutate(dollars_num = parse_number(dollars_usd))</code></pre>
 <p>Now, getting just the salmon:</p>

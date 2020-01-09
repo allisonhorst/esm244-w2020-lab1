@@ -441,7 +441,7 @@ blogdown::update_hugo()</code></pre>
 <li>Set “demo” widget to <code>active = false</code> (don’t delete)</li>
 <li>A lot of changes made to individual sections in: content/home</li>
 </ul></li>
-<li>In <code>content/authors/index.md</code>, update with your info &amp; contact information</li>
+<li>In <code>content/authors/admin/index.md</code>, update with your info &amp; contact information</li>
 <li>Update your picture:
 <ul>
 <li>Save a professional picture (square cropped) of you as <code>avatar.jpg</code></li>
@@ -465,8 +465,24 @@ blogdown::update_hugo()</code></pre>
 <h3>Adding your first project</h3>
 <ul>
 <li>Create a new folder in <code>content/project</code> called my_test_project</li>
-<li>Create a new R Markdown document, knit and save in the my_test_project folder you just created</li>
+<li>Create a new R Markdown document, knit and save as index.Rmd and index.html in the my_test_project folder you just created</li>
 <li><code>serve_site()</code> and see that your test project now shows up!</li>
+<li>Drop an image named <code>featured.jpg</code> to the folder to have a project image</li>
+</ul>
+</div>
+<div id="another-option-new-post-add-ins" class="section level3">
+<h3>Another option: New post add-ins</h3>
+<ul>
+<li>Create a new folder in <code>content/project</code> called cool_project</li>
+<li>In the top bar of RStudio, click on Addins &gt; New Post</li>
+<li>Add a post title</li>
+<li>Change the subdirectory to project/cool_project</li>
+<li>Update file type to .Rmd</li>
+<li>Change the name to ‘index.Rmd’</li>
+<li>Add some tags (comma to separate)</li>
+<li>Create the new post</li>
+<li>Update the .Rmd, knit &amp; serve site - check it out!</li>
+<li>Drop image called ‘featured.jpg’ into the cool_project folder, see that it appears</li>
 </ul>
 </div>
 <div id="publish-as-an-unsearchable-url-via-netlify" class="section level3">

@@ -91,7 +91,7 @@ That means that all our updates are organized and put into the `public/` folder,
     - Set “hero” widget to `active = false` (don't delete)
     - Set “demo” widget to `active = false` (don't delete)
     - A lot of changes made to individual sections in: content/home
-- In `content/authors/index.md`, update with your info & contact information
+- In `content/authors/admin/index.md`, update with your info & contact information
 - Update your picture: 
     - Save a professional picture (square cropped) of you as `avatar.jpg`
     - Copy and paste that into `content/authors/admin` to replace existing
@@ -118,8 +118,22 @@ To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines 
 ### Adding your first project
 
 - Create a new folder in `content/project` called my_test_project
-- Create a new R Markdown document, knit and save in the my_test_project folder you just created 
-- `serve_site()` and see that your test project now shows up! 
+- Create a new R Markdown document, knit and save as index.Rmd and index.html in the my_test_project folder you just created 
+- `serve_site()` and see that your test project now shows up!
+- Drop an image named `featured.jpg` to the folder to have a project image
+
+### Another option: New post add-ins
+
+- Create a new folder in `content/project` called cool_project
+- In the top bar of RStudio, click on Addins > New Post
+- Add a post title
+- Change the subdirectory to project/cool_project
+- Update file type to .Rmd
+- Change the name to 'index.Rmd'
+- Add some tags (comma to separate)
+- Create the new post
+- Update the .Rmd, knit & serve site - check it out!
+- Drop image called 'featured.jpg' into the cool_project folder, see that it appears
 
 ### Publish (as an unsearchable URL) via Netlify
 
