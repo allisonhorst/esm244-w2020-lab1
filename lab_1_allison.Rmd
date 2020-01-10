@@ -1,0 +1,84 @@
+---
+title: "My Lab 1"
+author: "Allison Horst"
+date: "1/9/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+```
+
+Read in noaa_fisheries.csv data
+
+```{r}
+us_landings <- read_csv(here("data","noaa_fisheries.csv"))
+```
+
+Now, make a tidy version of the data frame:
+
+```{r}
+landings_tidy <- us_landings %>% 
+  janitor::clean_names() %>% 
+  mutate(state = str_to_lower(state),
+         afs_name = str_to_lower(afs_name)) %>% 
+  mutate(dollars_num = parse_number(dollars_usd))
+```
+
+Let's just get some information for salmon: 
+
+```{r}
+salmon_landings <- landings_tidy %>% 
+  mutate(afs_clean = str_remove(afs_name, pattern = "aggregate")) %>% 
+  filter(str_detect(afs_clean, pattern = "salmon")) %>% 
+  separate(afs_clean, into = c("group","species"), sep = ",")
+```
+
+Find some grouped summary data: 
+
+Find annual total US landings and dollar value (summing across all states) for each TYPE of salmon using `group_by()` + `summarize()`
+
+```{r}
+salmon_summary <- salmon_landings %>% 
+  group_by(year, species) %>% 
+  summarize(
+    tot_landings = sum(landings_pounds),
+    tot_value = sum(dollars_num)
+  )
+```
+
+Make a graph! 
+```{r}
+salmon_landings_graph <- ggplot(data = salmon_summary, 
+                                aes(x = year, y = tot_landings)) +
+  geom_line(aes(color = species)) +
+  theme_minimal()
+
+salmon_landings_graph
+```
+
+Now we'll export our graph with ggsave:
+```{r}
+ggsave(plot = salmon_landings_graph,
+       here("figures","us_salmon_ah.png"),
+       height = 5,
+       width = 8)
+```
+
+Make a nice kable table: 
+```{r}
+salmon_first_5 <- salmon_summary %>% 
+  head(5)
+```
+
+Use kable: 
+```{r}
+kable(salmon_first_5) %>% 
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE)
+```
+
